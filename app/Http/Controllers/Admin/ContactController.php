@@ -69,7 +69,13 @@ class ContactController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Contact::where('id', '=', $id)->get();
+
+        if ($data) {
+            return ApiFormatter::createApi(200, 'Success', $data);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
@@ -145,6 +151,7 @@ class ContactController extends Controller
                 'alamat' => $request->alamat,
                 'whatsapp' => $request->whatsapp,
                 'instagram' => $request->instagram,
+                'facebook' => $request->facebook,
                 'twitter' => $request->twitter,
             ]);
 

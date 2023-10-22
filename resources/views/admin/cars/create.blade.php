@@ -14,6 +14,14 @@
                     <input type="text" name="nama_mobil" class="form-control" value="{{ old('nama_mobil') }}">
                 </div>
                 <div class="form-group">
+                    <label for="nama_mobil">Merk Mobil</label>
+                    <input type="text" name="merk_mobil" class="form-control" value="{{ old('nama_mobil') }}">
+                </div>
+                <div class="form-group">
+                    <label for="nama_mobil">Kat Mobil</label>
+                    <input type="text" name="kat_mobil" class="form-control" value="{{ old('nama_mobil') }}">
+                </div>
+                <div class="form-group">
                     <label for="plat_nomor">Plat Nomor Mobil</label>
                     <input type="text" name="plat_nomor" class="form-control" value="{{ old('plat_nomor') }}">
                 </div>

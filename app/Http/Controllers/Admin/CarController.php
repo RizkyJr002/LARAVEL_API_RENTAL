@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Helpers\ApiFormatter;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CarController extends Controller
 {
@@ -30,15 +31,19 @@ class CarController extends Controller
 
         // return view('admin.cars.index', compact('cars'));
 
-        // MENGGUNAKAN API
+        $data = DB::table('cars')
+        ->join('merks','merks.id', '=', 'cars.id_merk')
+        ->join('kategoris','kategoris.id', '=', 'cars.id_kategori')
+        ->select('cars.*','merks.nama_merk','kategoris.nama_kategori')
+        ->orderBy('cars.id_car','asc')
+        ->get();
 
-        $data = Car::all();
-
-        if ($data) {
-            return ApiFormatter::createApi(200, 'Success', $data);
-        } else {
-            return ApiFormatter::createApi(400, 'Failed');
-        }
+        // if ($data) {
+        //     return ApiFormatter::createApi(200, 'Success', $data);
+        // } else {
+        //     return ApiFormatter::createApi(400, 'Failed');
+        // }
+        return response()->json($data);
     }
 
     /**
@@ -59,18 +64,18 @@ class CarController extends Controller
      */
     public function store(CarStoreRequest $request)
     {
-        if ($request->validated()) {
-            $gambar = $request->file('gambar')->store('assets/car', 'public');
+        // if ($request->validated()) {
+        //     $gambar = $request->file('gambar')->store('assets/car', 'public');
 
-            $slug = Str::slug($request->nama_mobil, '-');
+        //     $slug = Str::slug($request->nama_mobil, '-');
 
-            Car::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug]);
-        }
+        //     Car::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug]);
+        // }
 
-        return redirect()->route('admin.cars.index')->with([
-            'message' => 'Data Sukses Dibuat',
-            'alert-type' => 'success'
-        ]);
+        // return redirect()->route('admin.cars.index')->with([
+        //     'message' => 'Data Sukses Dibuat',
+        //     'alert-type' => 'success'
+        // ]);
 
         // MENGGUNAKAN API
 
@@ -86,7 +91,7 @@ class CarController extends Controller
                 ]);
             }
 
-            $data = Car::where('id')->get();
+            $data = Car::where('id_car')->get();
 
             if ($data) {
                 return ApiFormatter::createApi(200, 'Success', $data);
@@ -104,9 +109,9 @@ class CarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id_car)
     {
-        $data = Car::where('id', '=', $id)->get();
+        $data = Car::where('id_car', '=', $id_car)->get();
 
         if ($data) {
             return ApiFormatter::createApi(200, 'Success', $data);
@@ -135,15 +140,15 @@ class CarController extends Controller
      */
     public function update(CarUpdateRequest $request, Car $car)
     {
-        if($request->validated()){
-            $slug = Str::slug($request->nama_mobil, '-');
-            $car->update($request->validated() + ['slug' => $slug]);
-        }
+        // if($request->validated()){
+        //     $slug = Str::slug($request->nama_mobil, '-');
+        //     $car->update($request->validated() + ['slug' => $slug]);
+        // }
 
-        return redirect()->route('admin.cars.index')->with([
-            'message' => 'Data Berhasil Diedit',
-            'alert-type' => 'info'
-        ]);
+        // return redirect()->route('admin.cars.index')->with([
+        //     'message' => 'Data Berhasil Diedit',
+        //     'alert-type' => 'info'
+        // ]);
     }
 
     /**
@@ -154,33 +159,33 @@ class CarController extends Controller
      */
     public function destroy(Car $car)
     {
-        if ($car->gambar) {
-            unlink('storage/'. $car->gambar);
-        }
-        $car->delete();
+        // if ($car->gambar) {
+        //     unlink('storage/'. $car->gambar);
+        // }
+        // $car->delete();
 
-        return redirect()->back()->with([
-            'message' => 'Data Berhasil Dihapus',
-            'alert-type' => 'danger'
-        ]);
+        // return redirect()->back()->with([
+        //     'message' => 'Data Berhasil Dihapus',
+        //     'alert-type' => 'danger'
+        // ]);
     }
 
     public function updateImage(Request $request, $carId)
     {
-        $request->validate([
-            'gambar' => 'required|image'
-        ]);
-        $car = Car::findOrFail($carId);
-        if($request->gambar){
-            unlink('storage/'. $car->gambar);
-            $gambar = $request->file('gambar')->store('assets/car', 'public');
+        // $request->validate([
+        //     'gambar' => 'required|image'
+        // ]);
+        // $car = Car::findOrFail($carId);
+        // if($request->gambar){
+        //     unlink('storage/'. $car->gambar);
+        //     $gambar = $request->file('gambar')->store('assets/car', 'public');
 
-            $car->update(['gambar' => $gambar]);
-        }
+        //     $car->update(['gambar' => $gambar]);
+        // }
 
-        return redirect()->back()->with([
-            'message' => 'Gambar Berhasil Diedit',
-            'alert-type' => 'info'
-        ]);
+        // return redirect()->back()->with([
+        //     'message' => 'Gambar Berhasil Diedit',
+        //     'alert-type' => 'info'
+        // ]);
     }
 }

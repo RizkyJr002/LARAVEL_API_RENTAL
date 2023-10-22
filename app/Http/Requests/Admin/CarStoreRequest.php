@@ -26,6 +26,8 @@ class CarStoreRequest extends FormRequest
         return [
             'nama_mobil' => 'required',
             'plat_nomor' => 'required',
+            'merk_mobil' => 'required',
+            'kat_mobil' => 'required',
             'harga_sewa' => 'required',
             'gambar' => 'required|image',
             'bahan_bakar' => 'required',

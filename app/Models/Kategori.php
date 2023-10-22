@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Merk extends Model
+class Kategori extends Model
 {
     use HasFactory;
-    protected $fillable = ['id_merk','nama_merk'];
+    protected $fillable = ['id','nama_kategori'];
     public $timestamps = false;
 }
