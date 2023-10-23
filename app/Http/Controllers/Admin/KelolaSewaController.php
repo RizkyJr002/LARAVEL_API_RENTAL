@@ -19,12 +19,24 @@ class KelolaSewaController extends Controller
     {
         // $data = KelolaSewa::all();
         $data = DB::table('kelola_sewas')
-        ->join('users','users.id', '=', 'kelola_sewas.id_user')
-        ->join('cars','cars.id_car', '=', 'kelola_sewas.id_mobil')
-        ->join('bookings','bookings.id', '=', 'kelola_sewas.id_booking')
-        ->select('kelola_sewas.*','users.nama_user','cars.nama_mobil','bookings.tgl_booking','bookings.kode_booking')
-        ->orderBy('kelola_sewas.tgl_booking','asc')
-        ->get();
+            ->join('users', 'users.id', '=', 'kelola_sewas.id_user')
+            ->join('cars', 'cars.id_car', '=', 'kelola_sewas.id_mobil')
+            ->join('bookings', 'bookings.id', '=', 'kelola_sewas.id_booking')
+            ->join('pengembalians', 'pengembalians.id', '=', 'kelola_sewas.id_pengembalian')
+            ->select(
+                'kelola_sewas.*',
+                'users.nama_user',
+                'cars.nama_mobil',
+                'bookings.total_sewa',
+                'bookings.tgl_booking',
+                'bookings.kode_booking',
+                'pengembalians.tgl_mulai',
+                'pengembalians.tgl_selesai',
+                'pengembalians.lama_sewa',
+                'bookings.metode_pembayaran',
+                'bookings.bukti_bayar'
+            )
+            ->get();
 
         // if ($data) {
         //     return ApiFormatter::createApi(200, 'Success', $data);

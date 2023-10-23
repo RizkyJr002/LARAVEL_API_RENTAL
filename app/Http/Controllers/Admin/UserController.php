@@ -49,7 +49,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        // return view('admin.user.create');
+        return view('admin.user.create');
     }
 
     /**
@@ -58,50 +58,50 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        // if ($request->validated()) {
-        //     $gambar = $request->file('gambar')->store('assets/user', 'public');
+        if ($request->validated()) {
+            $gambar = $request->file('gambar')->store('assets/user', 'public');
 
-        //     $slug = Str::slug($request->nama_user, '-');
+            $slug = Str::slug($request->nama_user, '-');
 
-        //     User::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug, 'password' => Hash::make($request['password'])]);
-        // }
+            User::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug, 'password' => Hash::make($request['password'])]);
+        }
 
-        // return redirect()->route('admin.user.index')->with([
-        //     'message' => 'Data Sukses Dibuat',
-        //     'alert-type' => 'success'
-        // ]);
+        return redirect()->route('admin.user.index')->with([
+            'message' => 'Data Sukses Dibuat',
+            'alert-type' => 'success'
+        ]);
 
         // MENGGUNAKAN API
 
-        try {
-            $request->validate([
-                'nama_user' => 'required',
-                'alamat' => 'required',
-                'email' => 'required',
-                'no_telp' => 'required',
-                'password' => 'required',
-            ]);
+        // try {
+        //     $request->validate([
+        //         'nama_user' => 'required',
+        //         'alamat' => 'required',
+        //         'email' => 'required',
+        //         'no_telp' => 'required',
+        //         'password' => 'required',
+        //     ]);
 
-            $user = User::create([
-                'nama_user' => $request->nama_user,
-                'alamat' => $request->alamat,
-                'email' => $request->email,
-                'no_telp' => $request->no_telp,
-                'password' => $request->password,
-            ]);
+        //     $user = User::create([
+        //         'nama_user' => $request->nama_user,
+        //         'alamat' => $request->alamat,
+        //         'email' => $request->email,
+        //         'no_telp' => $request->no_telp,
+        //         'password' => $request->password,
+        //     ]);
 
-            $data = User::where('id', '=', $user->id)->get();
+        //     $data = User::where('id', '=', $user->id)->get();
 
-            if ($data) {
-                return ApiFormatter::createApi(200, 'Success', $data);
-            } else {
-                return ApiFormatter::createApi(400, 'Failed');
-            }
-        } catch (Exception $error) {
-            return ApiFormatter::createApi(400, 'Failed');
-        }
+        //     if ($data) {
+        //         return ApiFormatter::createApi(200, 'Success', $data);
+        //     } else {
+        //         return ApiFormatter::createApi(400, 'Failed');
+        //     }
+        // } catch (Exception $error) {
+        //     return ApiFormatter::createApi(400, 'Failed');
+        // }
     }
 
     /**

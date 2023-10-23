@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\KelolaSewaController;
 use App\Http\Controllers\Admin\LaporanMobilController;
@@ -55,8 +56,11 @@ Route::get('booking',[BookingController::class, 'index']);
 Route::get('pengembalian',[PengembalianController::class, 'index']);
 
 Route::get('laporan-user',[LaporanUserController::class, 'index']);
+Route::delete('laporan-user/destroy/{id}',[LaporanUserController::class, 'destroy']);
 
 Route::get('laporan-mobil',[LaporanMobilController::class, 'index']);
+
+Route::get('faq',[FaqController::class, 'index']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

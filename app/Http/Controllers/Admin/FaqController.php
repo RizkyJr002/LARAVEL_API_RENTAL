@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
-use App\Models\LaporanUser;
-use Exception;
+use App\Models\Faq;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class LaporanUserController extends Controller
+class FaqController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,18 +16,12 @@ class LaporanUserController extends Controller
      */
     public function index()
     {
-        $data = DB::table('laporan_users')
-        ->join('users','users.id', '=', 'laporan_users.id_user')
-        ->select('laporan_users.*','users.nama_user')
-        ->orderBy('laporan_users.tgl_posting','asc')
-        ->get();
-
-        // if ($data) {
-        //     return ApiFormatter::createApi(200, 'Success', $data);
-        // } else {
-        //     return ApiFormatter::createApi(400, 'Failed');
-        // }
-        return response()->json($data);
+        $data = Faq::all();
+        if ($data) {
+            return ApiFormatter::createApi(200, 'Success', $data);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
@@ -95,17 +87,6 @@ class LaporanUserController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $lapuser = LaporanUser::findOrFail($id);
-            $data = $lapuser->delete();
-
-            if ($data) {
-                return ApiFormatter::createApi(200, 'Success Destroy Data');
-            } else {
-                return ApiFormatter::createApi(400, 'Failed');
-            }
-        } catch (Exception $error) {
-            return ApiFormatter::createApi(400, 'Failed');
-        }
+        //
     }
 }
