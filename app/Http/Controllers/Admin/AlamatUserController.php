@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
-use App\Models\Faq;
+use App\Models\AlamatUser;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class FaqController extends Controller
+class AlamatUserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,12 +18,18 @@ class FaqController extends Controller
      */
     public function index()
     {
-        $data = Faq::all();
-        if ($data) {
-            return ApiFormatter::createApi(200, 'Success', $data);
-        } else {
-            return ApiFormatter::createApi(400, 'Failed');
-        }
+        $data = DB::table('alamat_users')
+        ->join('users','users.id', '=', 'alamat_users.id_user')
+        ->select('alamat_users.*','users.nama_user','users.alamat')
+        ->orderBy('alamat_users.kota','asc')
+        ->get();
+
+        // if ($data) {
+        //     return ApiFormatter::createApi(200, 'Success', $data);
+        // } else {
+        //     return ApiFormatter::createApi(400, 'Failed');
+        // }
+        return response()->json($data);
     }
 
     /**
@@ -45,16 +52,20 @@ class FaqController extends Controller
     {
         try {
             $request->validate([
-                'pertanyaan' => 'required',
-                'jawaban' => 'required'
+                'id_user' => 'required',
+                'kota' => 'required',
+                'provinsi' => 'required',
+                'kode_pos' => 'required',
             ]);
 
-            $faq = Faq::create([
-                'pertanyaan' => $request->pertanyaan,
-                'jawaban' => $request->jawaban
+            $alamat = AlamatUser::create([
+                'id_user' => $request->id_user,
+                'kota' => $request->kota,
+                'provinsi' => $request->provinsi,
+                'kode_pos' => $request->kode_pos
             ]);
 
-            $data = Faq::where('id', '=', $faq->id)->get();
+            $data = AlamatUser::where('id', '=', $alamat->id)->get();
 
             if ($data) {
                 return ApiFormatter::createApi(200, 'Success', $data);
@@ -108,6 +119,17 @@ class FaqController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $alamatuser = AlamatUser::findOrFail($id);
+            $data = $alamatuser->delete();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success Destroy Data');
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 }

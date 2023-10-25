@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
-use App\Models\KelolaSewa;
+use App\Models\Mobil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
-class KelolaSewaController extends Controller
+class MobilController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,26 +18,12 @@ class KelolaSewaController extends Controller
      */
     public function index()
     {
-        // $data = KelolaSewa::all();
-        $data = DB::table('kelola_sewas')
-            ->join('users', 'users.id', '=', 'kelola_sewas.id_user')
-            ->join('mobils', 'mobils.id', '=', 'kelola_sewas.id_mobil')
-            ->join('bookings', 'bookings.id', '=', 'kelola_sewas.id_booking')
-            ->join('pengembalians', 'pengembalians.id', '=', 'kelola_sewas.id_pengembalian')
-            ->select(
-                'kelola_sewas.*',
-                'users.nama_user',
-                'mobils.nama_mobil',
-                'bookings.total_sewa',
-                'bookings.tgl_booking',
-                'bookings.kode_booking',
-                'pengembalians.tgl_mulai',
-                'pengembalians.tgl_selesai',
-                'pengembalians.lama_sewa',
-                'bookings.metode_pembayaran',
-                'bookings.bukti_bayar'
-            )
-            ->get();
+        $data = DB::table('mobils')
+        ->join('merks','merks.id', '=', 'mobils.id_merk')
+        ->join('kategoris','kategoris.id', '=', 'mobils.id_kategori')
+        ->select('mobils.*','merks.nama_merk','kategoris.nama_kategori')
+        ->orderBy('mobils.nama_mobil','asc')
+        ->get();
 
         // if ($data) {
         //     return ApiFormatter::createApi(200, 'Success', $data);
@@ -64,7 +51,32 @@ class KelolaSewaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $imageName = $request->file('gambar')->store('assets/car', 'public');
+
+            Mobil::create([
+                'id_merk' => $request->id_merk,
+                'id_kategori' => $request->id_kategori,
+                'nama_mobil' => $request->nama_mobil,
+                'harga_sewa' => $request->harga_sewa,
+                'plat_nomor' => $request->plat_nomor,
+                'gambar' => $imageName,
+                'status' => $request->status,
+                'deskripsi' => $request->deskripsi,
+                'transmisi' => $request->transmisi,
+                'bahan_bakar' => $request->bahan_bakar,
+            ]);
+
+            Storage::disk('assets/car', 'public')->put($imageName, file_get_contents($request->gambar));
+
+            return response()->json([
+                'message' => 'sukses ditambahkan'
+            ],200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'gagal'
+            ]);
+        }
     }
 
     /**

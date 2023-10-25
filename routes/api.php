@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AlamatUserController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\Admin\ContactController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\KelolaSewaController;
 use App\Http\Controllers\Admin\LaporanMobilController;
 use App\Http\Controllers\Admin\LaporanUserController;
 use App\Http\Controllers\Admin\MerkController;
+use App\Http\Controllers\Admin\MobilController;
 use App\Http\Controllers\Admin\PengembalianController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
@@ -39,9 +41,13 @@ Route::post('contact/update/{id}',[ContactController::class, 'update']);
 Route::get('contact/{id}',[ContactController::class, 'show']);
 
 Route::get('users',[UserController::class, 'index']);
-Route::put('users/store',[UserController::class, 'store']);
+Route::post('users/store',[UserController::class, 'store']);
+Route::delete('users/destroy/{id}',[UserController::class, 'destroy']);
 
 Route::get('sewa',[KelolaSewaController::class, 'index']);
+
+Route::get('mobil',[MobilController::class, 'index']);
+Route::post('mobil/store',[MobilController::class, 'store']);
 
 Route::get('kategori',[KategoriController::class, 'index']);
 Route::post('kategori/store',[KategoriController::class, 'store']);
@@ -61,6 +67,11 @@ Route::delete('laporan-user/destroy/{id}',[LaporanUserController::class, 'destro
 Route::get('laporan-mobil',[LaporanMobilController::class, 'index']);
 
 Route::get('faq',[FaqController::class, 'index']);
+Route::post('faq/store',[FaqController::class, 'store']);
+
+Route::get('alamat-user',[AlamatUserController::class, 'index']);
+Route::post('alamat-user/store',[AlamatUserController::class, 'store']);
+Route::delete('alamat-user/destroy/{id}',[AlamatUserController::class, 'destroy']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

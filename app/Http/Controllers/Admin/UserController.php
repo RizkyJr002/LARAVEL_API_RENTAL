@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\UserStoreRequest;
 use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Models\User;
 use Exception;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -60,18 +60,18 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        if ($request->validated()) {
-            $gambar = $request->file('gambar')->store('assets/user', 'public');
+        // if ($request->validated()) {
+        //     $gambar = $request->file('gambar')->store('assets/user', 'public');
 
-            $slug = Str::slug($request->nama_user, '-');
+        //     $slug = Str::slug($request->nama_user, '-');
 
-            User::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug, 'password' => Hash::make($request['password'])]);
-        }
+        //     User::create($request->except('gambar') + ['gambar' => $gambar, 'slug' => $slug, 'password' => Hash::make($request['password'])]);
+        // }
 
-        return redirect()->route('admin.user.index')->with([
-            'message' => 'Data Sukses Dibuat',
-            'alert-type' => 'success'
-        ]);
+        // return redirect()->route('admin.user.index')->with([
+        //     'message' => 'Data Sukses Dibuat',
+        //     'alert-type' => 'success'
+        // ]);
 
         // MENGGUNAKAN API
 
@@ -102,6 +102,28 @@ class UserController extends Controller
         // } catch (Exception $error) {
         //     return ApiFormatter::createApi(400, 'Failed');
         // }
+        try {
+            $imageName = $request->file('gambar')->store('assets/user', 'public');
+
+            User::create([
+                'nama_user' => $request->nama_user,
+                'alamat' => $request->alamat,
+                'email' => $request->email,
+                'no_telp' => $request->no_telp,
+                'password' => $request->password,
+                'gambar' => $imageName
+            ]);
+
+            Storage::disk('assets/user', 'public')->put($imageName, file_get_contents($request->gambar));
+
+            return response()->json([
+                'message' => 'sukses ditambahkan'
+            ],200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'sukses ditambahkan'
+            ]);
+        }
     }
 
     /**
@@ -123,7 +145,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin.user.edit', compact('user'));
+        // return view('admin.user.edit', compact('user'));
     }
 
     /**
@@ -152,17 +174,31 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        if ($user->gambar) {
-            unlink('storage/'. $user->gambar);
-        }
-        $user->delete();
+        // if ($user->gambar) {
+        //     unlink('storage/'. $user->gambar);
+        // }
+        // $user->delete();
 
-        return redirect()->back()->with([
-            'message' => 'Data Berhasil Dihapus',
-            'alert-type' => 'danger'
-        ]);
+        // return redirect()->back()->with([
+        //     'message' => 'Data Berhasil Dihapus',
+        //     'alert-type' => 'danger'
+        // ]);
+
+        // MENGGUNAKAN API
+        try {
+            $faq = User::findOrFail($id);
+            $data = $faq->delete();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success Destroy Data');
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     public function updateImage(Request $request, $userId)
