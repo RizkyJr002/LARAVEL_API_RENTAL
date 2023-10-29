@@ -102,28 +102,6 @@ class UserController extends Controller
         // } catch (Exception $error) {
         //     return ApiFormatter::createApi(400, 'Failed');
         // }
-        try {
-            $imageName = $request->file('gambar')->store('assets/user', 'public');
-
-            User::create([
-                'nama_user' => $request->nama_user,
-                'alamat' => $request->alamat,
-                'email' => $request->email,
-                'no_telp' => $request->no_telp,
-                'password' => $request->password,
-                'gambar' => $imageName
-            ]);
-
-            Storage::disk('assets/user', 'public')->put($imageName, file_get_contents($request->gambar));
-
-            return response()->json([
-                'message' => 'sukses ditambahkan'
-            ],200);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'sukses ditambahkan'
-            ]);
-        }
     }
 
     /**
@@ -157,15 +135,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request,User $user)
     {
-        if($request->validated()){
-            $slug = Str::slug($request->nama_user, '-');
-            $user->update($request->validated() + ['slug' => $slug]);
-        }
-
-        return redirect()->route('admin.user.index')->with([
-            'message' => 'Data Berhasil Diedit',
-            'alert-type' => 'info'
-        ]);
+        //
     }
 
     /**
@@ -199,24 +169,5 @@ class UserController extends Controller
         } catch (Exception $error) {
             return ApiFormatter::createApi(400, 'Failed');
         }
-    }
-
-    public function updateImage(Request $request, $userId)
-    {
-        $request->validate([
-            'gambar' => 'required|image'
-        ]);
-        $user = User::findOrFail($userId);
-        if($request->gambar){
-            unlink('storage/'. $user->gambar);
-            $gambar = $request->file('gambar')->store('assets/user', 'public');
-
-            $user->update(['gambar' => $gambar]);
-        }
-
-        return redirect()->back()->with([
-            'message' => 'Gambar Berhasil Diedit',
-            'alert-type' => 'info'
-        ]);
     }
 }

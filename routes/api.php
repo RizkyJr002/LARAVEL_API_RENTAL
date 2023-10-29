@@ -9,10 +9,13 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\KelolaSewaController;
 use App\Http\Controllers\Admin\LaporanMobilController;
 use App\Http\Controllers\Admin\LaporanUserController;
+use App\Http\Controllers\Admin\MasukkanController;
 use App\Http\Controllers\Admin\MerkController;
 use App\Http\Controllers\Admin\MobilController;
 use App\Http\Controllers\Admin\PengembalianController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,22 +35,19 @@ Route::get('merk/{id}',[MerkController::class, 'show']);
 Route::post('merk/update/{id}',[MerkController::class, 'update']);
 Route::delete('merk/destroy/{id}',[MerkController::class, 'destroy']);
 
-Route::get('cars',[CarController::class, 'index']);
-Route::post('cars/store',[CarController::class, 'store']);
-Route::get('cars/show/{id}',[CarController::class, 'show']);
-
 Route::get('contact',[ContactController::class, 'index']);
 Route::post('contact/update/{id}',[ContactController::class, 'update']);
 Route::get('contact/{id}',[ContactController::class, 'show']);
 
 Route::get('users',[UserController::class, 'index']);
-Route::post('users/store',[UserController::class, 'store']);
 Route::delete('users/destroy/{id}',[UserController::class, 'destroy']);
 
 Route::get('sewa',[KelolaSewaController::class, 'index']);
 
 Route::get('mobil',[MobilController::class, 'index']);
+Route::get('mobil/{id}',[MobilController::class, 'show']);
 Route::post('mobil/store',[MobilController::class, 'store']);
+Route::delete('mobil/destroy/{id}',[MobilController::class, 'destroy']);
 
 Route::get('kategori',[KategoriController::class, 'index']);
 Route::post('kategori/store',[KategoriController::class, 'store']);
@@ -58,6 +58,7 @@ Route::delete('kategori/destroy/{id}',[KategoriController::class, 'destroy']);
 Route::get('kelola-sewa',[KelolaSewaController::class, 'index']);
 
 Route::get('booking',[BookingController::class, 'index']);
+Route::post('booking/store',[BookingController::class, 'store']);
 
 Route::get('pengembalian',[PengembalianController::class, 'index']);
 
@@ -73,6 +74,13 @@ Route::get('alamat-user',[AlamatUserController::class, 'index']);
 Route::post('alamat-user/store',[AlamatUserController::class, 'store']);
 Route::delete('alamat-user/destroy/{id}',[AlamatUserController::class, 'destroy']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::get('masukkan',[MasukkanController::class, 'index']);
+Route::post('masukkan/store',[MasukkanController::class, 'store']);
+Route::delete('masukkan/destroy/{id}',[MasukkanController::class, 'destroy']);
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('login', [ApiController::class, 'login']);
+Route::post('register', [ApiController::class, 'register']);

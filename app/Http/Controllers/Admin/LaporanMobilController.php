@@ -16,8 +16,8 @@ class LaporanMobilController extends Controller
     public function index()
     {
         $data = DB::table('laporan_mobils')
-        ->join('cars','cars.id_car', '=', 'laporan_mobils.id_mobil')
-        ->select('laporan_mobils.*','cars.nama_mobil')
+        ->join('mobils','mobils.id', '=', 'laporan_mobils.id_mobil')
+        ->select('laporan_mobils.*','mobils.nama_mobil')
         ->orderBy('laporan_mobils.tgl_posting','asc')
         ->get();
 

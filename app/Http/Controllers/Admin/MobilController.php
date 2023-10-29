@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Mobil;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -87,7 +88,13 @@ class MobilController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Mobil::where('id', '=', $id)->get();
+
+        if ($data) {
+            return ApiFormatter::createApi(200, 'Success', $data);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
@@ -121,6 +128,17 @@ class MobilController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $delmobil = Mobil::findOrFail($id);
+            $data = $delmobil->delete();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success Destroy Data');
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 }

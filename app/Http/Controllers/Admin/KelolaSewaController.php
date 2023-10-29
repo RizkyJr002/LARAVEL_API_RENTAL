@@ -30,11 +30,10 @@ class KelolaSewaController extends Controller
                 'bookings.total_sewa',
                 'bookings.tgl_booking',
                 'bookings.kode_booking',
-                'pengembalians.tgl_mulai',
-                'pengembalians.tgl_selesai',
+                'bookings.tgl_selesai',
                 'pengembalians.lama_sewa',
                 'bookings.metode_pembayaran',
-                'bookings.bukti_bayar'
+                'bookings.gambar',
             )
             ->get();
 

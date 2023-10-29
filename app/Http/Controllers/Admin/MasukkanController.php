@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\Masukkan;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class PengembalianController extends Controller
+class MasukkanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,23 +17,13 @@ class PengembalianController extends Controller
      */
     public function index()
     {
-        $data = DB::table('pengembalians')
-        ->join('users','users.id', '=', 'pengembalians.id_user')
-        ->join('mobils','mobils.id', '=', 'pengembalians.id_mobil')
-        ->join('bookings','bookings.id', '=', 'pengembalians.id_booking')
-        ->select('pengembalians.*','users.nama_user','mobils.nama_mobil','bookings.kode_booking','bookings.tgl_booking','bookings.tgl_selesai')
-        ->orderBy('pengembalians.denda','asc')
-        ->get();
+        $data = Masukkan::all();
 
-        // $data = Booking::all();
-
-        // if ($data) {
-        //     return ApiFormatter::createApi(200, 'Success', $data);
-        // } else {
-        //     return ApiFormatter::createApi(400, 'Failed');
-        // }
-
-        return response()->json($data);
+        if ($data) {
+            return ApiFormatter::createApi(200, 'Success', $data);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
@@ -52,7 +44,29 @@ class PengembalianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'username' => 'required',
+                'email' => 'required',
+                'masukan' => 'required'
+            ]);
+
+            $faq = Masukkan::create([
+                'username' => $request->username,
+                'email' => $request->email,
+                'masukan' => $request->masukan,
+            ]);
+
+            $data = Masukkan::where('id', '=', $faq->id)->get();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success', $data);
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
@@ -97,6 +111,17 @@ class PengembalianController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $mask = Masukkan::findOrFail($id);
+            $data = $mask->delete();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success Destroy Data');
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 }
