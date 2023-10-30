@@ -88,13 +88,8 @@ class MobilController extends Controller
      */
     public function show($id)
     {
-        $data = Mobil::where('id', '=', $id)->get();
-
-        if ($data) {
-            return ApiFormatter::createApi(200, 'Success', $data);
-        } else {
-            return ApiFormatter::createApi(400, 'Failed');
-        }
+        $mobil = Mobil::find($id);
+        return response()->json(['mobil'=>$mobil], 200);
     }
 
     /**
