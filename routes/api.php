@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\LaporanUserController;
 use App\Http\Controllers\Admin\MasukkanController;
 use App\Http\Controllers\Admin\MerkController;
 use App\Http\Controllers\Admin\MobilController;
+use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\PengembalianController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ApiController;
@@ -59,6 +60,9 @@ Route::get('kelola-sewa',[KelolaSewaController::class, 'index']);
 
 Route::get('booking',[BookingController::class, 'index']);
 Route::post('booking/store',[BookingController::class, 'store']);
+
+Route::get('pemesanan',[PemesananController::class, 'index']);
+Route::post('pemesanan/store',[PemesananController::class, 'store']);
 
 Route::get('pengembalian',[PengembalianController::class, 'index']);
 

@@ -21,19 +21,17 @@ class KelolaSewaController extends Controller
         $data = DB::table('kelola_sewas')
             ->join('users', 'users.id', '=', 'kelola_sewas.id_user')
             ->join('mobils', 'mobils.id', '=', 'kelola_sewas.id_mobil')
-            ->join('bookings', 'bookings.id', '=', 'kelola_sewas.id_booking')
+            ->join('pemesanans', 'pemesanans.id', '=', 'kelola_sewas.id_booking')
             ->join('pengembalians', 'pengembalians.id', '=', 'kelola_sewas.id_pengembalian')
             ->select(
                 'kelola_sewas.*',
                 'users.nama_user',
                 'mobils.nama_mobil',
-                'bookings.total_sewa',
-                'bookings.tgl_booking',
-                'bookings.kode_booking',
-                'bookings.tgl_selesai',
-                'pengembalians.lama_sewa',
-                'bookings.metode_pembayaran',
-                'bookings.gambar',
+                'pemesanans.total_sewa',
+                'pemesanans.tgl_booking',
+                'pemesanans.kode_booking',
+                'pemesanans.tgl_selesai',
+                'pemesanans.lama_sewa',
             )
             ->get();
 

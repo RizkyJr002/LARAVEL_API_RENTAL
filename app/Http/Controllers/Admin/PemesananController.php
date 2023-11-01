@@ -4,29 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BookingResource;
-use App\Models\Booking;
+use App\Models\Pemesanan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
-class BookingController extends Controller
+class PemesananController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $data = DB::table('bookings')
-            ->join('users', 'users.id', '=', 'bookings.id_user')
-            ->join('mobils', 'mobils.id', '=', 'bookings.id_mobil')
-            ->select('bookings.*', 'users.nama_user', 'mobils.nama_mobil')
-            ->orderBy('bookings.kode_booking', 'asc')
-            ->get();
+        $data = DB::table('pemesanans')
+        ->join('users','users.id', '=', 'pemesanans.id_user')
+        ->join('mobils','mobils.id', '=', 'pemesanans.id_mobil')
+        ->select('pemesanans.*','users.nama_user','mobils.nama_mobil')
+        ->get();
 
         // $data = Booking::all();
 
@@ -57,44 +53,41 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        //define validation rules
-        $imageName = $request->file('gambar')->store('assets/booking', 'public');
-        $validator = Validator::make($request->all(), [
+        try {
+            $request->validate([
             'kode_booking'     => 'required',
-            'gambar' => 'required|image',
             'id_user'   => 'required',
             'id_mobil'   => 'required',
             'asal'   => 'required',
             'tujuan'   => 'required',
-            'metode_pembayaran'   => 'required',
             'total_sewa'   => 'required',
             'tgl_booking'   => 'required',
             'tgl_selesai'   => 'required',
-        ]);
+            'lama_sewa'   => 'required'
+            ]);
 
-        //check if validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            $pesan = Pemesanan::create([
+                'id_user'     => $request->id_user,
+                'id_mobil'   => $request->id_mobil,
+                'kode_booking'   => $request->kode_booking,
+                'asal'   => $request->asal,
+                'tujuan'   => $request->tujuan,
+                'total_sewa'   => $request->total_sewa,
+                'tgl_booking'   => $request->tgl_booking,
+                'tgl_selesai'   => $request->tgl_selesai,
+                'lama_sewa'   => $request->lama_sewa
+            ]);
+
+            $data = Pemesanan::where('id', '=', $pesan->id)->get();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success', $data);
+            } else {
+                return ApiFormatter::createApi(400, 'Failed');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
         }
-
-        //create post
-        $post = Booking::create([
-            'id_user'     => $request->id_user,
-            'gambar' => $imageName,
-            'id_mobil'   => $request->id_mobil,
-            'kode_booking'   => $request->kode_booking,
-            'asal'   => $request->asal,
-            'tujuan'   => $request->tujuan,
-            'metode_pembayaran'   => $request->metode_pembayaran,
-            'total_sewa'   => $request->total_sewa,
-            'tgl_booking'   => $request->tgl_booking,
-            'tgl_selesai'   => $request->tgl_selesai,
-        ]);
-
-        Storage::disk('assets/booking', 'public')->put($imageName, file_get_contents($request->gambar));
-
-        //return response
-        return new BookingResource(true, 'Data Post Berhasil Ditambahkan!', $post);
     }
 
     /**

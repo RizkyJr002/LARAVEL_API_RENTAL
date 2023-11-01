@@ -18,8 +18,8 @@ class PengembalianController extends Controller
         $data = DB::table('pengembalians')
         ->join('users','users.id', '=', 'pengembalians.id_user')
         ->join('mobils','mobils.id', '=', 'pengembalians.id_mobil')
-        ->join('bookings','bookings.id', '=', 'pengembalians.id_booking')
-        ->select('pengembalians.*','users.nama_user','mobils.nama_mobil','bookings.kode_booking','bookings.tgl_booking','bookings.tgl_selesai')
+        ->join('pemesanans','pemesanans.id', '=', 'pengembalians.id_booking')
+        ->select('pengembalians.*','users.nama_user','mobils.nama_mobil','pemesanans.kode_booking','pemesanans.tgl_booking','pemesanans.tgl_selesai')
         ->orderBy('pengembalians.denda','asc')
         ->get();
 
