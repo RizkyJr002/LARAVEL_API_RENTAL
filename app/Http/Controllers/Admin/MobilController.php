@@ -20,11 +20,11 @@ class MobilController extends Controller
     public function index()
     {
         $data = DB::table('mobils')
-        ->join('merks','merks.id', '=', 'mobils.id_merk')
-        ->join('kategoris','kategoris.id', '=', 'mobils.id_kategori')
-        ->select('mobils.*','merks.nama_merk','kategoris.nama_kategori')
-        ->orderBy('mobils.nama_mobil','asc')
-        ->get();
+            ->join('merks', 'merks.id', '=', 'mobils.id_merk')
+            ->join('kategoris', 'kategoris.id', '=', 'mobils.id_kategori')
+            ->select('mobils.*', 'merks.nama_merk', 'kategoris.nama_kategori')
+            ->orderBy('mobils.nama_mobil', 'asc')
+            ->get();
 
         // if ($data) {
         //     return ApiFormatter::createApi(200, 'Success', $data);
@@ -72,7 +72,7 @@ class MobilController extends Controller
 
             return response()->json([
                 'message' => 'sukses ditambahkan'
-            ],200);
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'gagal'
@@ -86,10 +86,17 @@ class MobilController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        $mobil = Mobil::find($id);
-        return response()->json(['mobil'=>$mobil], 200);
+        $id = $request->input('id');
+        $mobil = DB::table('mobils')
+            ->join('merks', 'merks.id', '=', 'mobils.id_merk')
+            ->join('kategoris', 'kategoris.id', '=', 'mobils.id_kategori')
+            ->select('mobils.*', 'merks.nama_merk', 'kategoris.nama_kategori')
+            ->where('mobils.id', '=', $id)
+            ->get();
+
+        return response()->json(['mobil' => $mobil], 200);
     }
 
     /**

@@ -45,7 +45,7 @@ Route::delete('users/destroy/{id}',[UserController::class, 'destroy']);
 Route::get('sewa',[KelolaSewaController::class, 'index']);
 
 Route::get('mobil',[MobilController::class, 'index']);
-Route::get('mobil/{id}',[MobilController::class, 'show']);
+Route::post('mobil',[MobilController::class, 'show']);
 Route::post('mobil/store',[MobilController::class, 'store']);
 Route::delete('mobil/destroy/{id}',[MobilController::class, 'destroy']);
 
