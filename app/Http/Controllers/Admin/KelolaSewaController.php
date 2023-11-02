@@ -34,12 +34,7 @@ class KelolaSewaController extends Controller
                 'pemesanans.lama_sewa',
             )
             ->get();
-
-        // if ($data) {
-        //     return ApiFormatter::createApi(200, 'Success', $data);
-        // } else {
-        //     return ApiFormatter::createApi(400, 'Failed');
-        // }
+            
         return response()->json($data);
     }
 

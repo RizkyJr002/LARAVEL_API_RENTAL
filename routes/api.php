@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\PengembalianController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Models\Pemesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,11 +59,10 @@ Route::delete('kategori/destroy/{id}',[KategoriController::class, 'destroy']);
 
 Route::get('kelola-sewa',[KelolaSewaController::class, 'index']);
 
-Route::get('booking',[BookingController::class, 'index']);
-Route::post('booking/store',[BookingController::class, 'store']);
-
 Route::get('pemesanan',[PemesananController::class, 'index']);
 Route::post('pemesanan/store',[PemesananController::class, 'store']);
+Route::post('pemesanan',[PemesananController::class, 'show']);
+Route::post('pemesanan/update/{id}',[PemesananController::class, 'update']);
 
 Route::get('pengembalian',[PengembalianController::class, 'index']);
 
@@ -82,7 +82,7 @@ Route::get('masukkan',[MasukkanController::class, 'index']);
 Route::post('masukkan/store',[MasukkanController::class, 'store']);
 Route::delete('masukkan/destroy/{id}',[MasukkanController::class, 'destroy']);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 

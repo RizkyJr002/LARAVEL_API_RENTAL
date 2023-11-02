@@ -19,10 +19,10 @@ class PemesananController extends Controller
     public function index()
     {
         $data = DB::table('pemesanans')
-        ->join('users','users.id', '=', 'pemesanans.id_user')
-        ->join('mobils','mobils.id', '=', 'pemesanans.id_mobil')
-        ->select('pemesanans.*','users.nama_user','mobils.nama_mobil')
-        ->get();
+            ->join('users', 'users.nama_user', '=', 'pemesanans.username')
+            ->join('mobils', 'mobils.nama_mobil', '=', 'pemesanans.mobil')
+            ->select('pemesanans.*')
+            ->get();
 
         // $data = Booking::all();
 
@@ -55,27 +55,27 @@ class PemesananController extends Controller
     {
         try {
             $request->validate([
-            'kode_booking'     => 'required',
-            'id_user'   => 'required',
-            'id_mobil'   => 'required',
-            'asal'   => 'required',
-            'tujuan'   => 'required',
-            'total_sewa'   => 'required',
-            'tgl_booking'   => 'required',
-            'tgl_selesai'   => 'required',
-            'lama_sewa'   => 'required'
+                'kode_booking'     => 'required',
+                'username'   => 'required',
+                'mobil'   => 'required',
+                'asal'   => 'required',
+                'tujuan'   => 'required',
+                'total_sewa'   => 'required',
+                'tgl_booking'   => 'required',
+                'tgl_selesai'   => 'required',
+                'lama_sewa'   => 'required'
             ]);
 
             $pesan = Pemesanan::create([
-                'id_user'     => $request->id_user,
-                'id_mobil'   => $request->id_mobil,
+                'username'     => $request->username,
+                'mobil'   => $request->mobil,
                 'kode_booking'   => $request->kode_booking,
                 'asal'   => $request->asal,
                 'tujuan'   => $request->tujuan,
                 'total_sewa'   => $request->total_sewa,
                 'tgl_booking'   => $request->tgl_booking,
                 'tgl_selesai'   => $request->tgl_selesai,
-                'lama_sewa'   => $request->lama_sewa
+                'lama_sewa'   => $request->lama_sewa,
             ]);
 
             $data = Pemesanan::where('id', '=', $pesan->id)->get();
@@ -96,9 +96,17 @@ class PemesananController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $id = $request->input('nama_user');
+        $pesan = DB::table('pemesanans')
+            ->join('users', 'users.nama_user', '=', 'pemesanans.username')
+            ->join('mobils', 'mobils.nama_mobil', '=', 'pemesanans.mobil')
+            ->select('pemesanans.*', 'mobils.nama_mobil')
+            ->where('pemesanans.username', '=', $id)
+            ->get();
+
+        return response()->json(['Booking' => $pesan], 200);
     }
 
     /**
@@ -121,7 +129,27 @@ class PemesananController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $request->validate([
+                'status' => 'required'
+            ]);
+
+            $pesan = Pemesanan::findOrFail($id);
+
+            $pesan->update([
+                'status' => $request->status
+            ]);
+
+            $data = Pemesanan::where('id', '=', $pesan->id)->get();
+
+            if ($data) {
+                return ApiFormatter::createApi(200, 'Success Update Status', $data);
+            } else {
+                return ApiFormatter::createApi(400, 'Failed Update Status');
+            }
+        } catch (Exception $error) {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**
